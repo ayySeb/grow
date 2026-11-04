@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="de" data-accent="graphite">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>grow</title>
+  <meta name="description" content="Persönliche Wachstumsziele: Quests, Gewohnheiten, Skills und Reflexion">
+  <meta name="theme-color" content="#fafaf9">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="icons/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    // Apply the saved theme before first paint so there is no flash.
+    try {
+      const s = JSON.parse(localStorage.getItem('grow.v1'))?.settings;
+      if (s?.theme && s.theme !== 'auto') document.documentElement.dataset.theme = s.theme;
+      if (s?.accent) document.documentElement.dataset.accent = s.accent;
+    } catch {}
+  </script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <header class="g-head">
+    <a class="g-brand" href="#quests">grow</a>
+    <nav class="g-tabs" id="tabs" aria-label="Bereiche der App"></nav>
+    <button class="icon-btn" id="settingsBtn" data-icon="settings" aria-label="Einstellungen" title="Einstellungen"></button>
+  </header>
+  <main class="g-view" id="view"></main>
+  <nav class="g-bottom" id="bottomTabs" aria-label="Bereiche der App"></nav>
+  <div class="g-toast" id="toast" role="status" hidden></div>
+  <dialog class="sheet" id="sheet" aria-label="Details"></dialog>
+  <dialog class="sheet small" id="settings" aria-label="Einstellungen"></dialog>
+</body>
+</html>
