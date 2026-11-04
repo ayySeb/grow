@@ -24,6 +24,8 @@ const listeners = new Set();
 
 export const onSyncChange = fn => listeners.add(fn);
 export const syncInfo = () => ({ enabled: syncEnabled, ready: !!db, email: user?.email ?? null, status, lastSync });
+// The signed-in client and user for photos and push (photos.js, push.js); null without an account.
+export const account = () => (user ? { db, user } : null);
 
 function setStatus(s) {
   status = s;

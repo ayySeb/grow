@@ -1,8 +1,8 @@
-const CACHE = 'grow-v1';
+const CACHE = 'grow-v2';
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'css/style.css',
   'js/app.js', 'js/store.js', 'js/sync.js', 'js/config.js', 'js/rules.js', 'js/dates.js', 'js/ui.js', 'js/model.js',
-  'js/xp.js', 'js/charts.js', 'js/sheet.js', 'js/settings.js',
+  'js/xp.js', 'js/charts.js', 'js/sheet.js', 'js/settings.js', 'js/timer.js', 'js/photos.js', 'js/push.js',
   'js/views/quests.js', 'js/views/today.js', 'js/views/character.js', 'js/views/journal.js', 'js/views/more.js',
   'js/sheets/quest.js', 'js/sheets/habit.js', 'js/sheets/check.js', 'js/sheets/moment.js', 'js/sheets/area.js',
   'js/sheets/review.js', 'js/sheets/ideas.js',
@@ -40,5 +40,27 @@ self.addEventListener('fetch', e => {
         return res;
       })
       .catch(() => caches.match(request, { ignoreSearch: true }).then(hit => hit || caches.match('index.html'))),
+  );
+});
+
+// The Sunday reminder (see js/push.js). Tapping it opens grow, or brings an open window to the week review.
+self.addEventListener('push', e => {
+  const msg = e.data?.json() ?? {};
+  e.waitUntil(self.registration.showNotification(msg.title ?? 'grow', {
+    body: msg.body ?? '',
+    tag: msg.tag ?? 'grow',
+    icon: 'icons/icon-192.png',
+    data: { url: msg.url ?? './' },
+  }));
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url = new URL(e.notification.data?.url ?? './', self.registration.scope).href;
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      const open = list.find(c => c.url.startsWith(self.registration.scope) && 'navigate' in c);
+      return open ? open.navigate(url).then(c => c?.focus()) : self.clients.openWindow(url);
+    }),
   );
 });

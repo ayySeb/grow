@@ -27,7 +27,32 @@ export const ICON = {
   copy: svg('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>'),
   print: svg('<path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v6H7z"/>'),
   chevron: svg('<path d="M6 9l6 6 6-6"/>'),
+  play: svg('<path d="M8 5.5v13l10-6.5z" fill="currentColor"/>'),
+  pause: svg('<path d="M9 5v14M15 5v14" stroke-width="2.5"/>'),
+  stop: svg('<rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor"/>'),
+  camera: svg('<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="12.5" r="3.5"/>'),
 };
+
+// A running clock: 754000 → "12:34", 3723000 → "1:02:03".
+const pad = n => String(n).padStart(2, '0');
+export function clock(ms) {
+  const s = Math.floor(ms / 1000);
+  const h = Math.floor(s / 3600);
+  const m = Math.floor(s / 60) % 60;
+  return h ? `${h}:${pad(m)}:${pad(s % 60)}` : `${m}:${pad(s % 60)}`;
+}
+
+// A habit timer's time (see timer.js): ticks while it runs, stands still while paused.
+export function liveClock(t, cls = '') {
+  if (!t.start) return `<span class="${cls}">${clock(t.ms)}</span>`;
+  return `<span class="${cls}" data-base="${t.ms}" data-since="${t.start}">${clock(t.ms + Date.now() - t.start)}</span>`;
+}
+
+export function tick(root = document) {
+  const now = Date.now();
+  for (const el of root.querySelectorAll('[data-since]')) el.textContent = clock(+el.dataset.base + now - +el.dataset.since);
+}
+setInterval(tick, 1000);
 
 const NUM = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 1 });
 export const num = n => NUM.format(n);

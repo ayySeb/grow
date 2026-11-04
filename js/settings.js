@@ -2,6 +2,7 @@ import * as store from './store.js';
 import { todayIso } from './dates.js';
 import { esc, ICON } from './ui.js';
 import { syncInfo, onSyncChange, signIn, signUp, signOut, syncNow } from './sync.js';
+import { pushState, enablePush, disablePush, testPush } from './push.js';
 
 const THEMES = [['auto', 'Auto'], ['light', 'Hell'], ['dark', 'Dunkel']];
 const ACCENTS = [['graphite', 'Graphit'], ['blue', 'Blau'], ['green', 'Grün'], ['coral', 'Koralle'], ['violet', 'Violett'], ['amber', 'Bernstein']];
@@ -21,8 +22,40 @@ export function applySettings() {
 darkQuery.addEventListener('change', applySettings);
 
 export function openSettings() {
+  pushMsg = '';
   render();
   dlg.showModal();
+  pushState().then(s => {
+    push = s;
+    if (dlg.open && !dlg.querySelector('.auth input:focus')) render();
+  });
+}
+
+// --- Sunday reminder (push.js) ---
+
+let push = 'off';
+let pushMsg = '';
+const PUSH_HINT = {
+  unsupported: 'Auf dem iPhone geht das, wenn grow auf dem Home-Bildschirm liegt (Teilen → Zum Home-Bildschirm). Dann hier einschalten.',
+  denied: 'Mitteilungen sind für grow blockiert. Gib sie in den Einstellungen des Browsers frei, dann geht der Schalter.',
+};
+
+function pushSection() {
+  if (!syncInfo().email) return '';
+  const off = push === 'unsupported' || push === 'denied';
+  return `<section>
+    <h3>Erinnerung</h3>
+    <label class="switch-row">Sonntags an den Wochenrückblick erinnern<input type="checkbox" class="switch" name="push"${push === 'on' ? ' checked' : ''}${off ? ' disabled' : ''}></label>
+    <p class="hint g-push-hint">${esc(pushMsg || PUSH_HINT[push] || 'Eine Nachricht am Sonntag ab 18 Uhr, nur wenn der Rückblick noch fehlt. Gilt für dieses Gerät.')}</p>
+    ${push === 'on' ? '<button type="button" class="ghost-btn g-push-test" data-act="push-test">Probe schicken</button>' : ''}
+  </section>`;
+}
+
+async function togglePush(el) {
+  el.disabled = true;
+  pushMsg = (await (el.checked ? enablePush() : disablePush())) ?? '';
+  push = await pushState();
+  render();
 }
 
 const STATUS = {
@@ -74,6 +107,7 @@ function render() {
         <button type="button" class="icon-btn" data-act="close" aria-label="Schließen">${ICON.close}</button>
       </div>
       ${syncSection()}
+      ${pushSection()}
       <section>
         <h3>Erscheinungsbild</h3>
         <div class="seg">${THEMES.map(([v, l]) => `<button type="button" data-set-theme="${v}" aria-pressed="${s.theme === v}">${l}</button>`).join('')}</div>
@@ -108,6 +142,13 @@ dlg.addEventListener('click', e => {
   if (b.dataset.act === 'close') dlg.close();
   else if (b.dataset.act === 'export') download();
   else if (b.dataset.act === 'sync') syncNow();
+  else if (b.dataset.act === 'push-test') {
+    b.disabled = true;
+    testPush().then(msg => {
+      pushMsg = msg ?? 'Probe ist raus. Sie sollte gleich auftauchen.';
+      render();
+    });
+  }
   else if (b.dataset.act === 'signout') signOut().then(render);
   else if (b.dataset.setTheme || b.dataset.setAccent) {
     store.setSettings(b.dataset.setTheme ? { theme: b.dataset.setTheme } : { accent: b.dataset.setAccent });
@@ -134,6 +175,7 @@ dlg.addEventListener('submit', async e => {
 
 dlg.addEventListener('change', async e => {
   const el = e.target;
+  if (el.name === 'push') return togglePush(el);
   if (el.name !== 'import' || !el.files[0]) return;
   if (!confirm('Das Backup ersetzt alle aktuellen Daten. Fortfahren?')) return;
   try {

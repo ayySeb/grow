@@ -802,6 +802,124 @@ dialog.sheet::backdrop { background: rgba(10, 10, 12, .3); backdrop-filter: blur
 .g-toast-in { animation: toast-in .3s cubic-bezier(.2, .8, .2, 1); }
 @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 16px); } }
 
+/* ---------- timer (as in Tage) ---------- */
+
+.timer-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 12px 12px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: var(--bg);
+}
+.timer-read { flex: 1 1 100px; display: flex; flex-direction: column; min-width: 0; }
+.timer-actions { margin-left: auto; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.timer-time { font: 500 26px/1.15 var(--mono); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.timer-time.running { color: var(--accent); }
+.timer-sub { font-size: 12.5px; color: var(--ink-2); }
+.timer-btn { height: 38px; padding: 0 16px 0 12px; }
+.timer-box .pill { height: 38px; }
+.timer-box .pill svg { width: 13px; height: 13px; }
+
+.g-timer-start { color: var(--muted); }
+.g-timer-start svg { width: 12px; height: 12px; }
+.g-timer {
+  flex: none;
+  height: 28px;
+  padding: 0 9px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 99px;
+  background: transparent;
+  font: 500 12px var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+.g-timer.on { border-color: color-mix(in srgb, var(--accent) 45%, transparent); color: var(--accent); }
+
+/* the timer bar, on every screen while a timer is going */
+.dock {
+  position: fixed;
+  left: 50%;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  max-width: min(440px, calc(100vw - 32px));
+  padding: 5px 6px 5px 5px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 99px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  transform: translateX(-50%);
+  animation: rise .26s cubic-bezier(.2, .8, .2, 1);
+}
+.dock[hidden] { display: none; }
+.dock-main {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 6px 12px;
+  border: 0;
+  border-radius: 99px;
+  background: transparent;
+  font-size: 14px;
+}
+.dock-main:hover { background: var(--hover); }
+.dock-title { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.dock-time { font: 500 14px var(--mono); font-variant-numeric: tabular-nums; color: var(--accent); }
+.dock-stop { border-radius: 99px; color: var(--ink); }
+.pulse { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 1s ease-in-out infinite alternate; }
+.pulse.paused { background: var(--muted); animation: none; }
+body.has-dock .g-view { padding-bottom: 120px; }
+body.has-dock .g-toast { bottom: calc(max(18px, env(safe-area-inset-bottom)) + 58px); }
+
+/* ---------- photo proof ---------- */
+
+.g-proof-row { display: flex; align-items: center; gap: 6px; margin: 0 0 6px 28px; }
+.g-proof-row .g-proof { flex: 1; min-width: 0; width: auto; margin: 0; }
+.g-photo-add { cursor: pointer; color: var(--muted); }
+.g-photo-add.busy { pointer-events: none; animation: pulse .7s ease-in-out infinite alternate; }
+.g-photo {
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--hover);
+  color: var(--muted);
+}
+.g-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.g-photo img:not([src]) { display: none; }
+.g-photo svg { width: 16px; height: 16px; }
+.g-pf-photo { width: 120px; height: 84px; margin-top: 6px; border-radius: 10px; }
+
+.g-photo-view {
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 14px;
+  background: #000;
+}
+.g-photo-view[open] { display: grid; animation: pop .18s cubic-bezier(.2, .8, .2, 1); }
+.g-photo-view::backdrop { background: rgba(10, 10, 12, .75); }
+.g-photo-view img { grid-area: 1 / 1; display: block; max-width: calc(100vw - 32px); max-height: calc(100dvh - 32px); object-fit: contain; }
+.g-photo-view .icon-btn { grid-area: 1 / 1; place-self: start end; margin: 8px; border-radius: 99px; background: rgba(0, 0, 0, .5); color: #fff; }
+
+.switch:disabled { opacity: .4; cursor: default; }
+.g-push-hint { margin: 8px 0 4px; }
+.g-push-test { margin-left: -10px; }
+
 /* ---------- phone ---------- */
 
 @media (max-width: 759.98px) {
@@ -843,6 +961,9 @@ dialog.sheet::backdrop { background: rgba(10, 10, 12, .3); backdrop-filter: blur
   .g-bottom a[aria-current="page"] { color: var(--ink); }
   .g-view { padding: 4px 16px calc(96px + env(safe-area-inset-bottom)); }
   .g-toast { bottom: calc(76px + env(safe-area-inset-bottom)); }
+  .dock { bottom: calc(72px + env(safe-area-inset-bottom)); }
+  body.has-dock .g-view { padding-bottom: calc(150px + env(safe-area-inset-bottom)); }
+  body.has-dock .g-toast { bottom: calc(130px + env(safe-area-inset-bottom)); }
   .g-motto { font-size: 17px; margin-bottom: 20px; }
   .g-quests { grid-template-columns: minmax(0, 1fr); }
   .g-review-btns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -885,7 +1006,7 @@ dialog.sheet::backdrop { background: rgba(10, 10, 12, .3); backdrop-filter: blur
 /* ---------- print (portfolio) ---------- */
 
 @media print {
-  .g-head, .g-bottom, .g-back, .g-no-print, .g-toast { display: none !important; }
+  .g-head, .g-bottom, .g-back, .g-no-print, .g-toast, .dock { display: none !important; }
   .g-print-only { display: block; margin: 0 0 8px; font-size: 26px; }
   body { background: #fff; color: #000; }
   .g-view { padding: 0; max-width: none; }

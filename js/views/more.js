@@ -6,6 +6,7 @@ import { vision, setVision, targetOptions, targetLabel, areas, areaOf, questDone
 import { compute } from '../xp.js';
 import { openHabit, newHabit } from '../sheets/habit.js';
 import { openSettings } from '../settings.js';
+import { photoThumb } from '../photos.js';
 
 // "Mehr": a menu, plus the pages behind it (#vision, #bucket, #lernen, #portfolio, #gewohnheiten).
 // Every page here is a plain view with tab "mehr".
@@ -173,7 +174,7 @@ function achievements() {
     out.get(key).push(item);
   };
   for (const q of store.all('quest')) {
-    for (const m of q.milestones) if (m.doneAt) push(q.skillId, { kind: 'Kann', text: m.text, day: dayOf(m.doneAt), proof: m.proof });
+    for (const m of q.milestones) if (m.doneAt) push(q.skillId, { kind: 'Kann', text: m.text, day: dayOf(m.doneAt), proof: m.proof, photo: m.photo });
     if (questDone(q)) push(q.skillId, { kind: 'Quest', text: q.title, day: dayOf(questDoneAt(q)) });
   }
   for (const m of store.all('moment')) if (m.title.trim()) push(m.skillId, { kind: 'Erstes Mal', text: m.title, day: m.date });
@@ -197,7 +198,7 @@ export const portfolioPage = {
         <div class="g-head-actions"><button type="button" class="ghost-btn" data-act="copy">${ICON.copy}Kopieren</button><button type="button" class="pill" data-act="print">${ICON.print}Drucken / PDF</button></div></div>
       <h1 class="g-print-only">Was ich kann</h1>
       ${groups.length ? groups.map(g => `<section class="g-sec"><h2 class="g-h">${esc(g.area)}</h2><ul class="g-portfolio">${g.items.map(i =>
-        `<li><span class="g-pf-kind">${esc(i.kind)}</span><span class="g-pf-text">${esc(i.text)}${i.proof ? `<span class="g-meta">${esc(i.proof)}</span>` : ''}</span><span class="g-pf-date">${shortDate(i.day)} ${i.day.slice(2, 4)}</span></li>`).join('')}</ul></section>`).join('')
+        `<li><span class="g-pf-kind">${esc(i.kind)}</span><span class="g-pf-text">${esc(i.text)}${i.proof ? `<span class="g-meta">${esc(i.proof)}</span>` : ''}${i.photo ? photoThumb(i.photo, 'g-pf-photo') : ''}</span><span class="g-pf-date">${shortDate(i.day)} ${i.day.slice(2, 4)}</span></li>`).join('')}</ul></section>`).join('')
         : '<p class="hint">Hier sammelt sich alles, was du erreichst: Meilensteine, Quests, Erste Male, Gelerntes.</p>'}`;
   },
   click(e) {

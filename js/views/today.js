@@ -1,12 +1,13 @@
 import * as store from '../store.js';
 import { MOODS, PAUSE_DAYS } from '../rules.js';
 import { iso, parse, addDays, todayIso, weekdayLong, dayMonth } from '../dates.js';
-import { esc, ICON, num } from '../ui.js';
+import { esc, ICON, num, liveClock } from '../ui.js';
+import { timed } from '../timer.js';
 import { targetLabel, dueOn, weekCount, getCheck, resting, rhythmLabel, byOrder, dueReviews } from '../model.js';
 import { compute, checkXp } from '../xp.js';
 import { REVIEWS } from '../rules.js';
 import { periodLabel } from '../dates.js';
-import { quickCheck, uncheck, openCheck } from '../sheets/check.js';
+import { quickCheck, uncheck, openCheck, startAndTell } from '../sheets/check.js';
 import { newHabit } from '../sheets/habit.js';
 import { newMoment, openMoment } from '../sheets/moment.js';
 
@@ -18,6 +19,16 @@ export const resetDate = () => (date = todayIso());
 export function reviewBanners() {
   return dueReviews().map(([type, key]) => `<button type="button" class="g-banner" data-review="${type}:${key}">`
     + `<span>${ICON.journal}</span><span><b>Zeit für deinen ${REVIEWS[type].label}</b><span class="g-meta">${periodLabel(type, key)}</span></span>${ICON.next}</button>`).join('');
+}
+
+// Minute habits get a play button; a timer that is already going shows its time and opens the check.
+function timerButton(h) {
+  if (!timed(h)) return '';
+  if (h.timer?.day === date) {
+    return `<button type="button" class="g-timer${h.timer.start ? ' on' : ''}" data-act="open" aria-label="Timer öffnen">${liveClock(h.timer)}</button>`;
+  }
+  if (date !== todayIso() || h.timer) return '';
+  return `<button type="button" class="icon-btn sm g-timer-start" data-act="timer" aria-label="Timer starten" title="Timer starten">${ICON.play}</button>`;
 }
 
 function row(h) {
@@ -38,6 +49,7 @@ function row(h) {
         <span class="g-meta">${meta.filter(Boolean).map(m => (m.startsWith('<') ? m : esc(m))).join('<i class="g-dot">·</i>')}</span>
       </button>
       ${mini}
+      ${timerButton(h)}
       ${c ? `<span class="g-xp">+${checkXp(c)}</span>` : ''}
     </li>`;
 }
@@ -100,6 +112,7 @@ export function click(e, rerender) {
       return;
     }
     case 'mini': return quickCheck(hId, date, { mini: true });
+    case 'timer': return startAndTell(hId);
     case 'open': return openCheck(hId, date);
     case 'prev': date = iso(addDays(parse(date), -1)); return rerender();
     case 'next': date = iso(addDays(parse(date), 1)); return rerender();

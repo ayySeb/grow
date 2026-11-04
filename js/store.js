@@ -130,7 +130,7 @@ function seed() {
     quests[q.title] = add('quest', {
       title: q.title, main: !!q.main, skillId: targets[q.skill] ?? null, sideSkillId: null, why: '', due: null,
       paused: false, order: i,
-      milestones: q.milestones.map(([text, size]) => ({ id: crypto.randomUUID(), text, size, doneAt: null, proof: '' })),
+      milestones: q.milestones.map(([text, size]) => ({ id: crypto.randomUUID(), text, size, doneAt: null, proof: '', photo: null })),
     }).id;
   });
   SEED.habits.forEach((h, i) => add('habit', {

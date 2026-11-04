@@ -1,9 +1,10 @@
 import * as store from '../store.js';
 import { INTENSITY } from '../rules.js';
-import { longDate } from '../dates.js';
-import { esc, ICON, num } from '../ui.js';
+import { longDate, todayIso } from '../dates.js';
+import { esc, ICON, num, liveClock, toast } from '../ui.js';
 import { checkId, getCheck, targetLabel } from '../model.js';
 import { checkXp } from '../xp.js';
+import { timed, startTimer, pauseTimer, stopTimer, discardTimer } from '../timer.js';
 import { openSheet } from '../sheet.js';
 import { openHabit } from './habit.js';
 
@@ -51,6 +52,7 @@ function render(dlg) {
           `<button type="button" data-intensity="${k}" aria-pressed="${v.intensity === k}">${l}</button>`).join('')}</div></div></div>
         ${h.mini ? `<label class="field g-switch-field"><span class="label">Mini-Version</span><div class="ctrl"><span class="g-hint-inline">${esc(h.mini)}</span><input type="checkbox" class="switch" name="mini"${v.mini ? ' checked' : ''}></div></label>` : ''}
       </div>
+      ${timed(h) && (date === todayIso() || h.timer?.day === date) ? `<div class="timer-box">${timerBox(h.timer)}</div>` : ''}
       <section><h3>Notiz</h3><textarea class="notes" name="note" placeholder="Wie lief's? Mit wem? Was war anders?">${esc(v.note)}</textarea></section>
       <p class="g-xp-line">${c ? `+${checkXp(v)} XP` : `Abhaken gibt ${checkXp(v)} XP`}${c && h.mode === 'amount' && c.amount ? ` · ${num(c.amount)} ${esc(h.unit)}` : ''}</p>
     </div>
@@ -61,6 +63,27 @@ function render(dlg) {
 }
 
 const redraw = () => render(document.getElementById('sheet'));
+
+function timerBox(t) {
+  const sub = t?.start ? 'läuft' : t ? 'pausiert' : 'Die Minuten landen in der Menge';
+  return `
+    <div class="timer-read">${t ? liveClock(t, `timer-time${t.start ? ' running' : ''}`) : '<span class="timer-time">0:00</span>'}<span class="timer-sub">${sub}</span></div>
+    <div class="timer-actions">
+      ${t && !t.start ? '<button type="button" class="ghost-btn" data-act="timer-discard">Verwerfen</button>' : ''}
+      ${t ? `<button type="button" class="pill" data-act="timer-stop">${ICON.stop}Eintragen</button>` : ''}
+      <button type="button" class="pill timer-btn${t?.start ? '' : ' primary'}" data-act="timer">${t?.start ? `${ICON.pause}Pause` : `${ICON.play}${t ? 'Weiter' : 'Start'}`}</button>
+    </div>`;
+}
+
+export function startAndTell(hId) {
+  const stopped = startTimer(hId);
+  if (stopped?.minutes) toast(`${esc(stopped.habit.title)}: <b>+${stopped.minutes} Min</b> eingetragen`);
+}
+
+export function stopAndTell(hId) {
+  const minutes = stopTimer(hId);
+  toast(minutes ? `<b>+${minutes} Min</b> eingetragen` : 'Unter 30 Sekunden, nichts eingetragen');
+}
 
 // Any detail entered counts as having done it.
 const save = patch => setCheck(habitId, date, { ...blank, ...getCheck(habitId, date), ...patch });
@@ -77,7 +100,20 @@ function click(e) {
     else quickCheck(habitId, date);
     return redraw();
   }
-  if (b.dataset.act === 'edit') openHabit(habitId);
+  if (b.dataset.act === 'edit') return openHabit(habitId);
+  if (b.dataset.act === 'timer') {
+    if (store.get(habitId).timer?.start) pauseTimer(habitId);
+    else startAndTell(habitId);
+    return redraw();
+  }
+  if (b.dataset.act === 'timer-stop') {
+    stopAndTell(habitId);
+    return redraw();
+  }
+  if (b.dataset.act === 'timer-discard' && confirm('Die gemessene Zeit verwerfen?')) {
+    discardTimer(habitId);
+    redraw();
+  }
 }
 
 function input(e) {

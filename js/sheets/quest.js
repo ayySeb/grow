@@ -4,6 +4,7 @@ import { esc, ICON, toast } from '../ui.js';
 import { targetOptions, targetLabel, questDone, byOrder } from '../model.js';
 import { openSheet, blurOnEnter } from '../sheet.js';
 import { openHabit, newHabit } from './habit.js';
+import { uploadPhoto, deletePhoto, photoThumb, fillPhotos } from '../photos.js';
 
 let id = null;
 const quest = () => store.get(id);
@@ -23,7 +24,7 @@ export function openQuest(questId) {
   if (!title.value) title.focus();
 }
 
-export const milestone = (text, size = 'M') => ({ id: crypto.randomUUID(), text, size, doneAt: null, proof: '' });
+export const milestone = (text, size = 'M') => ({ id: crypto.randomUUID(), text, size, doneAt: null, proof: '', photo: null });
 
 // Ticks a milestone off (or back on) and tells about the XP and a finished quest.
 export function toggleMilestone(questId, msId) {
@@ -82,6 +83,7 @@ function render(dlg) {
       <button type="button" class="ghost-btn" data-act="pause">${q.paused ? 'Fortsetzen' : 'Pausieren'}</button>
       <button type="button" class="pill primary" data-act="close">Fertig</button>
     </footer>`;
+  fillPhotos(dlg);
 }
 
 function msRow(m) {
@@ -93,7 +95,11 @@ function msRow(m) {
         <select name="ms-size" class="g-size-select" aria-label="Größe">${sizes}</select>
         <button type="button" class="icon-btn sm" data-act="ms-delete" aria-label="Entfernen">${ICON.close}</button>
       </div>
-      ${m.doneAt || m.proof ? `<input class="g-proof" name="ms-proof" value="${esc(m.proof)}" placeholder="Beweis: Was zeigt, dass du es kannst? (Zeit, Link, Notiz)">` : ''}
+      ${m.doneAt || m.proof || m.photo ? `<div class="g-proof-row">
+        <input class="g-proof" name="ms-proof" value="${esc(m.proof)}" placeholder="Beweis: Was zeigt, dass du es kannst? (Zeit, Link, Notiz)">
+        ${m.photo ? `${photoThumb(m.photo)}<button type="button" class="icon-btn sm" data-act="ms-photo-remove" aria-label="Foto entfernen" title="Foto entfernen">${ICON.close}</button>`
+          : `<label class="icon-btn g-photo-add" title="Foto als Beweis" aria-label="Foto als Beweis hinzufügen">${ICON.camera}<input type="file" accept="image/*" name="ms-photo" hidden></label>`}
+      </div>` : ''}
     </li>`;
 }
 
@@ -120,9 +126,18 @@ function click(e) {
     case 'ms-done':
       toggleMilestone(q.id, msId);
       return render(document.getElementById('sheet'));
-    case 'ms-delete':
+    case 'ms-delete': {
+      const photo = q.milestones.find(m => m.id === msId)?.photo;
+      if (photo) deletePhoto(photo);
       store.update(q.id, { milestones: q.milestones.filter(m => m.id !== msId) });
       return render(document.getElementById('sheet'));
+    }
+    case 'ms-photo-remove': {
+      if (!confirm('Foto entfernen?')) return;
+      deletePhoto(q.milestones.find(m => m.id === msId).photo);
+      patchMs(msId, { photo: null });
+      return render(document.getElementById('sheet'));
+    }
     case 'new-habit': return newHabit({ questId: q.id, skillId: q.skillId });
     case 'pause':
       store.update(q.id, { paused: !q.paused });
@@ -148,9 +163,26 @@ function change(e) {
   if (el.name === 'skillId' || el.name === 'sideSkillId') store.update(id, { [el.name]: el.value || null });
   else if (el.name === 'due') store.update(id, { due: el.value || null });
   else if (el.name === 'ms-size') patchMs(el.closest('[data-ms]').dataset.ms, { size: el.value });
+  else if (el.name === 'ms-photo' && el.files[0]) addPhoto(el.closest('[data-ms]').dataset.ms, el.files[0], el.closest('label'));
   else if (el.name === 'link' && el.value) {
     store.update(el.value, { questId: id });
     render(document.getElementById('sheet'));
+  }
+}
+
+async function addPhoto(msId, file, label) {
+  const questId = id;
+  label.classList.add('busy');
+  try {
+    const path = await uploadPhoto(file, questId, msId);
+    const q = store.get(questId);
+    if (!q?.milestones.some(m => m.id === msId)) return deletePhoto(path);
+    store.update(questId, { milestones: q.milestones.map(m => (m.id === msId ? { ...m, photo: path } : m)) });
+    if (id === questId && document.getElementById('sheet').open) render(document.getElementById('sheet'));
+    toast('Foto gespeichert');
+  } catch (e) {
+    label.classList.remove('busy');
+    toast(esc(e.message));
   }
 }
 
