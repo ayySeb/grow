@@ -1,4 +1,4 @@
-const CACHE = 'grow-v2';
+const CACHE = 'grow-v3';
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'css/style.css',
   'js/app.js', 'js/store.js', 'js/sync.js', 'js/config.js', 'js/rules.js', 'js/dates.js', 'js/ui.js', 'js/model.js',
@@ -10,7 +10,8 @@ const SHELL = [
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)));
+  // GitHub Pages lets browsers keep files for 10 minutes; 'reload' skips that, so a new version never mixes with old files.
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL.map(path => new Request(path, { cache: 'reload' })))));
   self.skipWaiting();
 });
 
@@ -32,8 +33,9 @@ self.addEventListener('fetch', e => {
   const cdn = /^(fonts\.googleapis\.com|fonts\.gstatic\.com|cdn\.jsdelivr\.net)$/.test(url.hostname);
   if (url.origin !== location.origin && !cdn) return;
 
+  // Own files are always checked with the server (cheap: unchanged ones come back as 304).
   e.respondWith(
-    fetch(request)
+    fetch(url.origin === location.origin ? new Request(request, { cache: 'no-cache' }) : request)
       .then(res => {
         const copy = res.clone();
         caches.open(CACHE).then(c => c.put(request, copy));
