@@ -82,6 +82,7 @@ alter table public.grow_push_keys enable row level security;
 
 -- Every hour on Sundays and Mondays (UTC, which covers Sunday evening in every time zone) the cron job
 -- calls the edge function; the function decides who is due. Calls without a token are fine, see its header.
+-- 15 s timeout: after a pause the function can take longer than pg_net's default 5 s to start.
 create extension if not exists pg_cron;
 create extension if not exists pg_net;
 
@@ -89,6 +90,7 @@ select cron.schedule('grow-week-reminder', '0 * * * 0,1', $$
   select net.http_post(
     url := 'https://ejmpbeesbctabrwdysfj.supabase.co/functions/v1/grow-push',
     headers := '{"Content-Type": "application/json"}'::jsonb,
-    body := '{}'::jsonb
+    body := '{}'::jsonb,
+    timeout_milliseconds := 15000
   );
 $$);
