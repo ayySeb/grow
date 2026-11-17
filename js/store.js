@@ -10,7 +10,7 @@ import { SEED } from './rules.js';
 // and the vision page ("vision").
 
 const KEY = 'grow.v1';
-export const DEFAULT_SETTINGS = { theme: 'auto', accent: 'graphite' };
+export const DEFAULT_SETTINGS = { theme: 'auto', accent: 'graphite', style: 'calm' };
 
 const listeners = new Set();
 let state;

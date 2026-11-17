@@ -5,19 +5,24 @@ import { syncInfo, onSyncChange, signIn, signUp, signOut, syncNow } from './sync
 import { pushState, enablePush, disablePush, testPush } from './push.js';
 
 const THEMES = [['auto', 'Auto'], ['light', 'Hell'], ['dark', 'Dunkel']];
+// "Aero" is glass, sky and gloss on top of the same layout (css/style.css → "style: Aero").
+const STYLES = [['calm', 'Ruhig'], ['aero', 'Aero']];
+// Browser bar colour per style, light and dark.
+const BAR = { calm: ['#fafaf9', '#111113'], aero: ['#7fd3f3', '#06233a'] };
 const ACCENTS = [['graphite', 'Graphit'], ['blue', 'Blau'], ['green', 'Grün'], ['coral', 'Koralle'], ['violet', 'Violett'], ['amber', 'Bernstein']];
 
 const dlg = document.getElementById('settings');
 const darkQuery = matchMedia('(prefers-color-scheme: dark)');
 
 export function applySettings() {
-  const { theme, accent } = store.settings();
+  const { theme, accent, style } = store.settings();
   const root = document.documentElement;
   if (theme === 'auto') delete root.dataset.theme;
   else root.dataset.theme = theme;
   root.dataset.accent = accent;
+  root.dataset.style = style;
   const dark = theme === 'dark' || (theme === 'auto' && darkQuery.matches);
-  document.querySelector('meta[name="theme-color"]').content = dark ? '#111113' : '#fafaf9';
+  document.querySelector('meta[name="theme-color"]').content = (BAR[style] ?? BAR.calm)[dark ? 1 : 0];
 }
 darkQuery.addEventListener('change', applySettings);
 
@@ -113,6 +118,10 @@ function render() {
         <div class="seg">${THEMES.map(([v, l]) => `<button type="button" data-set-theme="${v}" aria-pressed="${s.theme === v}">${l}</button>`).join('')}</div>
       </section>
       <section>
+        <h3>Stil</h3>
+        <div class="seg">${STYLES.map(([v, l]) => `<button type="button" data-set-style="${v}" aria-pressed="${s.style === v}">${l}</button>`).join('')}</div>
+      </section>
+      <section>
         <h3>Akzentfarbe</h3>
         <div class="colors">${ACCENTS.map(([v, l]) =>
           `<button type="button" class="dot swatch-${v}" data-set-accent="${v}" aria-pressed="${s.accent === v}" aria-label="${l}" title="${l}"></button>`).join('')}</div>
@@ -150,8 +159,9 @@ dlg.addEventListener('click', e => {
     });
   }
   else if (b.dataset.act === 'signout') signOut().then(render);
-  else if (b.dataset.setTheme || b.dataset.setAccent) {
-    store.setSettings(b.dataset.setTheme ? { theme: b.dataset.setTheme } : { accent: b.dataset.setAccent });
+  else if (b.dataset.setTheme || b.dataset.setAccent || b.dataset.setStyle) {
+    store.setSettings(b.dataset.setTheme ? { theme: b.dataset.setTheme }
+      : b.dataset.setStyle ? { style: b.dataset.setStyle } : { accent: b.dataset.setAccent });
     applySettings();
     render();
   }

@@ -1,0 +1,232 @@
+/* =========================================================================================
+   Stil "Aero": glass, sky and gloss on top of the same layout (settings → Stil → Aero).
+   Liquid-Glass panels over a Frutiger-Aero sky with bubbles, gel buttons with a gloss line.
+   Everything here only applies with <html data-style="aero">; "Ruhig" lives in style.css.
+   ========================================================================================= */
+
+:root[data-style="aero"] {
+  --bg: rgba(255, 255, 255, .42);
+  --surface: rgba(255, 255, 255, .6);
+  --ink: #0b2b40;
+  --ink-2: #355a70;
+  --muted: #5f8297;
+  --rule: rgba(16, 80, 120, .12);
+  --rule-strong: rgba(16, 80, 120, .22);
+  --hover: rgba(255, 255, 255, .5);
+  --shadow: 0 1px 2px rgba(8, 60, 100, .08), 0 18px 40px -10px rgba(8, 60, 100, .35);
+  --glass: rgba(255, 255, 255, .38);
+  --glass-strong: rgba(255, 255, 255, .72);
+  --glass-edge: rgba(255, 255, 255, .85);
+  --glass-shine: inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 -1px 0 rgba(255, 255, 255, .25);
+  --glass-blur: blur(22px) saturate(1.7);
+  --gloss: linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(255, 255, 255, .5) 50%, rgba(255, 255, 255, .3) 51%, rgba(255, 255, 255, .6));
+  --gloss-ink: #0b2b40;
+  --sky:
+    radial-gradient(120% 60% at 10% -10%, rgba(255, 255, 255, .95), transparent 55%),
+    radial-gradient(80% 50% at 100% 15%, rgba(140, 230, 255, .55), transparent 60%),
+    radial-gradient(90% 45% at 30% 110%, rgba(110, 215, 90, .75), transparent 60%),
+    radial-gradient(70% 40% at 95% 105%, rgba(60, 190, 120, .6), transparent 60%),
+    linear-gradient(172deg, #3fb6ec 0%, #8fd8f5 38%, #d3f2f6 62%, #b9ebc4 82%, #79d27a 100%);
+  --bubble-rim: radial-gradient(circle closest-side, rgba(255, 255, 255, .1) 0 74%, rgba(255, 255, 255, .7) 92%, rgba(255, 255, 255, 0) 100%);
+  --bubble-hi: radial-gradient(circle closest-side at 34% 30%, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 30%);
+  --swoosh: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, .45) 45%, transparent 46%, transparent 52%, rgba(255, 255, 255, .25) 60%, transparent 61%);
+}
+:root[data-style="aero"][data-accent="graphite"] { --accent: #0a8ad4; --accent-ink: #fff; }
+/* "Graphit" is aqua in Aero, so its swatch shows aqua too */
+[data-style="aero"] .swatch-graphite { --tint: #0a8ad4; }
+
+/* Dark: night sky, smoked glass. Same values twice: once for "Auto" in a dark system, once for "Dunkel". */
+@media (prefers-color-scheme: dark) {
+  :root[data-style="aero"]:not([data-theme="light"]) {
+    --bg: rgba(8, 30, 48, .45);
+    --surface: rgba(30, 64, 90, .5);
+    --ink: #e6f6ff;
+    --ink-2: #a6c6da;
+    --muted: #7a9bb0;
+    --rule: rgba(180, 230, 255, .1);
+    --rule-strong: rgba(180, 230, 255, .2);
+    --hover: rgba(180, 230, 255, .1);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 18px 44px -10px rgba(0, 0, 0, .7);
+    --glass: rgba(10, 34, 54, .45);
+    --glass-strong: rgba(14, 40, 62, .8);
+    --glass-edge: rgba(170, 230, 255, .22);
+    --glass-shine: inset 0 1px 0 rgba(200, 240, 255, .28), inset 0 -1px 0 rgba(200, 240, 255, .06);
+    --gloss: linear-gradient(180deg, rgba(170, 230, 255, .24), rgba(170, 230, 255, .08) 50%, rgba(170, 230, 255, .03) 51%, rgba(170, 230, 255, .1));
+    --gloss-ink: #e6f6ff;
+    --sky:
+      radial-gradient(90% 50% at 15% 0%, rgba(40, 170, 220, .45), transparent 60%),
+      radial-gradient(70% 40% at 90% 20%, rgba(60, 220, 190, .25), transparent 60%),
+      radial-gradient(90% 45% at 30% 110%, rgba(40, 150, 80, .55), transparent 60%),
+      linear-gradient(172deg, #03182b 0%, #07304b 40%, #0a4352 68%, #0b3a2c 100%);
+    --bubble-rim: radial-gradient(circle closest-side, rgba(160, 230, 255, .05) 0 74%, rgba(160, 230, 255, .35) 92%, rgba(160, 230, 255, 0) 100%);
+    --bubble-hi: radial-gradient(circle closest-side at 34% 30%, rgba(200, 245, 255, .6), rgba(200, 245, 255, 0) 30%);
+    --swoosh: linear-gradient(115deg, transparent 30%, rgba(120, 220, 255, .12) 45%, transparent 46%);
+    color-scheme: dark;
+  }
+  :root[data-style="aero"][data-accent="graphite"]:not([data-theme="light"]) { --accent: #39b8f5; --accent-ink: #03182b; }
+}
+:root[data-style="aero"][data-theme="dark"] {
+  --bg: rgba(8, 30, 48, .45);
+  --surface: rgba(30, 64, 90, .5);
+  --ink: #e6f6ff;
+  --ink-2: #a6c6da;
+  --muted: #7a9bb0;
+  --rule: rgba(180, 230, 255, .1);
+  --rule-strong: rgba(180, 230, 255, .2);
+  --hover: rgba(180, 230, 255, .1);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 18px 44px -10px rgba(0, 0, 0, .7);
+  --glass: rgba(10, 34, 54, .45);
+  --glass-strong: rgba(14, 40, 62, .8);
+  --glass-edge: rgba(170, 230, 255, .22);
+  --glass-shine: inset 0 1px 0 rgba(200, 240, 255, .28), inset 0 -1px 0 rgba(200, 240, 255, .06);
+  --gloss: linear-gradient(180deg, rgba(170, 230, 255, .24), rgba(170, 230, 255, .08) 50%, rgba(170, 230, 255, .03) 51%, rgba(170, 230, 255, .1));
+  --gloss-ink: #e6f6ff;
+  --sky:
+    radial-gradient(90% 50% at 15% 0%, rgba(40, 170, 220, .45), transparent 60%),
+    radial-gradient(70% 40% at 90% 20%, rgba(60, 220, 190, .25), transparent 60%),
+    radial-gradient(90% 45% at 30% 110%, rgba(40, 150, 80, .55), transparent 60%),
+    linear-gradient(172deg, #03182b 0%, #07304b 40%, #0a4352 68%, #0b3a2c 100%);
+  --bubble-rim: radial-gradient(circle closest-side, rgba(160, 230, 255, .05) 0 74%, rgba(160, 230, 255, .35) 92%, rgba(160, 230, 255, 0) 100%);
+  --bubble-hi: radial-gradient(circle closest-side at 34% 30%, rgba(200, 245, 255, .6), rgba(200, 245, 255, 0) 30%);
+  --swoosh: linear-gradient(115deg, transparent 30%, rgba(120, 220, 255, .12) 45%, transparent 46%);
+  color-scheme: dark;
+}
+:root[data-style="aero"][data-theme="dark"][data-accent="graphite"] { --accent: #39b8f5; --accent-ink: #03182b; }
+
+/* ---------- sky and bubbles: two fixed layers behind everything (fixed backgrounds fail on iOS) ---------- */
+
+[data-style="aero"] body { background: transparent; }
+[data-style="aero"] body::before,
+[data-style="aero"] body::after { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+[data-style="aero"] body::before { background: var(--swoosh), var(--sky); }
+[data-style="aero"] body::after {
+  inset: -40px 0;
+  background:
+    var(--bubble-hi) 6% 22% / 92px 92px no-repeat, var(--bubble-rim) 6% 22% / 92px 92px no-repeat,
+    var(--bubble-hi) 14% 30% / 34px 34px no-repeat, var(--bubble-rim) 14% 30% / 34px 34px no-repeat,
+    var(--bubble-hi) 90% 12% / 140px 140px no-repeat, var(--bubble-rim) 90% 12% / 140px 140px no-repeat,
+    var(--bubble-hi) 80% 26% / 44px 44px no-repeat, var(--bubble-rim) 80% 26% / 44px 44px no-repeat,
+    var(--bubble-hi) 95% 62% / 70px 70px no-repeat, var(--bubble-rim) 95% 62% / 70px 70px no-repeat,
+    var(--bubble-hi) 3% 74% / 120px 120px no-repeat, var(--bubble-rim) 3% 74% / 120px 120px no-repeat,
+    var(--bubble-hi) 22% 88% / 40px 40px no-repeat, var(--bubble-rim) 22% 88% / 40px 40px no-repeat,
+    var(--bubble-hi) 70% 92% / 56px 56px no-repeat, var(--bubble-rim) 70% 92% / 56px 56px no-repeat;
+  animation: aero-drift 26s ease-in-out infinite alternate;
+}
+@keyframes aero-drift { to { transform: translate3d(0, -36px, 0); } }
+
+/* ---------- the brand, a little glossy ---------- */
+
+[data-style="aero"] .g-brand {
+  background: linear-gradient(180deg, #2fb7f2 10%, #0a7fc4 55%, #2fa84f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, .8));
+}
+[data-style="aero"][data-theme="dark"] .g-brand { background-image: linear-gradient(180deg, #a9e8ff 10%, #39b8f5 55%, #6ee08a 100%); filter: none; }
+@media (prefers-color-scheme: dark) {
+  [data-style="aero"]:not([data-theme="light"]) .g-brand { background-image: linear-gradient(180deg, #a9e8ff 10%, #39b8f5 55%, #6ee08a 100%); filter: none; }
+}
+
+/* ---------- glass panes: header, the page itself, bottom bar, sheets, timer bar, toast ---------- */
+
+[data-style="aero"] .g-head,
+[data-style="aero"] .g-view,
+[data-style="aero"] .g-bottom,
+[data-style="aero"] .dock,
+[data-style="aero"] .g-toast,
+[data-style="aero"] dialog.sheet {
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shine), var(--shadow);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+[data-style="aero"] .g-head { margin-top: 14px; padding: 12px 14px 12px 22px; border-radius: 22px; }
+[data-style="aero"] .g-view { margin: 14px auto 40px; padding-top: 18px; border-radius: 26px; }
+[data-style="aero"] dialog.sheet, [data-style="aero"] .g-toast, [data-style="aero"] .dock { background: var(--glass-strong); }
+[data-style="aero"] dialog.sheet::backdrop { background: rgba(6, 50, 80, .22); backdrop-filter: blur(3px); }
+[data-style="aero"] .sheet-foot { background: transparent; }
+
+/* ---------- cards inside the glass: a brighter pane with a light edge ---------- */
+
+[data-style="aero"] .g-quest,
+[data-style="aero"] .g-banner,
+[data-style="aero"] .card,
+[data-style="aero"] .g-badge,
+[data-style="aero"] .g-review-btn,
+[data-style="aero"] .g-summary,
+[data-style="aero"] .g-idea,
+[data-style="aero"] .timer-box {
+  background: linear-gradient(180deg, var(--surface), var(--bg));
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shine), 0 6px 18px -8px rgba(8, 60, 100, .3);
+}
+[data-style="aero"] .g-quest, [data-style="aero"] .g-banner, [data-style="aero"] .g-review-btn { transition: transform .15s; }
+[data-style="aero"] .g-quest:hover, [data-style="aero"] .g-banner:hover, [data-style="aero"] .g-review-btn:hover { border-color: var(--glass-edge); transform: translateY(-1px); }
+
+/* ---------- buttons: glossy glass pills, gel for the main action ---------- */
+
+[data-style="aero"] .pill,
+[data-style="aero"] .seg [aria-pressed="true"],
+[data-style="aero"] .g-tabs a[aria-current="page"] {
+  border-color: var(--glass-edge);
+  background: var(--gloss);
+  box-shadow: var(--glass-shine), 0 2px 6px rgba(8, 60, 100, .16);
+  color: var(--gloss-ink);
+}
+[data-style="aero"] .pill.primary,
+[data-style="aero"] .switch:checked,
+[data-style="aero"] .check.on {
+  border-color: color-mix(in srgb, var(--accent) 70%, #000);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .6), rgba(255, 255, 255, .15) 48%, transparent 50%),
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 65%, #fff), var(--accent) 60%, color-mix(in srgb, var(--accent) 80%, #000));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), inset 0 -2px 5px rgba(0, 0, 0, .18), 0 3px 10px color-mix(in srgb, var(--accent) 40%, transparent);
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .25);
+}
+[data-style="aero"] .check {
+  border-color: var(--glass-edge);
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, .95), rgba(255, 255, 255, .35) 60%, rgba(255, 255, 255, .15));
+  box-shadow: inset 0 0 0 1px var(--rule-strong), 0 1px 3px rgba(8, 60, 100, .15);
+}
+[data-style="aero"] .check.on::after { border-color: #fff; }
+[data-style="aero"] .seg, [data-style="aero"] .switch { background: var(--bg); box-shadow: inset 0 1px 3px rgba(8, 60, 100, .18); }
+[data-style="aero"] .switch:checked::after { background: #fff; }
+
+/* ---------- progress: a liquid tube ---------- */
+
+[data-style="aero"] .g-bar, [data-style="aero"] .g-steps i { background: var(--bg); box-shadow: inset 0 1px 2px rgba(8, 60, 100, .2); }
+[data-style="aero"] .g-bar { height: 6px; border-radius: 99px; }
+[data-style="aero"] .g-steps i { height: 5px; border-radius: 99px; }
+[data-style="aero"] .g-bar i, [data-style="aero"] .g-steps i.on {
+  border-radius: 99px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .65), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, #6ee08a), var(--accent));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+[data-style="aero"] .pulse { box-shadow: 0 0 8px var(--accent); }
+
+/* in the dark the white glossy check becomes smoked glass */
+[data-style="aero"][data-theme="dark"] .check:not(.on) { background: radial-gradient(circle at 35% 30%, rgba(200, 240, 255, .35), rgba(200, 240, 255, .06) 60%); }
+@media (prefers-color-scheme: dark) {
+  [data-style="aero"]:not([data-theme="light"]) .check:not(.on) { background: radial-gradient(circle at 35% 30%, rgba(200, 240, 255, .35), rgba(200, 240, 255, .06) 60%); }
+}
+
+/* ---------- phone: floating glass header and bar, the page as one big pane ---------- */
+
+@media (max-width: 759.98px) {
+  [data-style="aero"] .g-head { top: max(8px, env(safe-area-inset-top)); margin: max(8px, env(safe-area-inset-top)) 10px 0; padding: 10px 10px 10px 18px; }
+  [data-style="aero"] .g-view { margin: 10px 10px 0; padding-top: 12px; border-radius: 24px; }
+  [data-style="aero"] .g-bottom { left: 10px; right: 10px; bottom: max(10px, env(safe-area-inset-bottom)); padding: 6px 4px; border-radius: 24px; }
+  [data-style="aero"] .dock { bottom: calc(86px + env(safe-area-inset-bottom)); }
+  [data-style="aero"] .g-toast, [data-style="aero"] body.has-dock .g-toast { bottom: calc(146px + env(safe-area-inset-bottom)); }
+  [data-style="aero"] body:not(.has-dock) .g-toast { bottom: calc(90px + env(safe-area-inset-bottom)); }
+}
+
+@media print {
+  [data-style="aero"] body::before, [data-style="aero"] body::after { display: none; }
+  [data-style="aero"] .g-view { margin: 0; border: 0; background: #fff; box-shadow: none; backdrop-filter: none; }
+}
