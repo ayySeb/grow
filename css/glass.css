@@ -1,0 +1,209 @@
+/* =========================================================================================
+   Stil "Glas": Liquid Glass (settings → Stil → Glas).
+   Clear, barely tinted glass over a soft colourful wallpaper, light caught on the rim,
+   capsule shapes and a floating tab bar. No gloss line, no gel: the light does the work.
+   Everything here only applies with <html data-style="glass">; "Ruhig" lives in style.css.
+   ========================================================================================= */
+
+:root[data-style="glass"] {
+  --bg: rgba(255, 255, 255, .22);
+  --surface: rgba(255, 255, 255, .34);
+  --ink: #16161a;
+  --ink-2: #3c3c44;
+  --muted: #6c6c78;
+  --rule: rgba(20, 20, 40, .08);
+  --rule-strong: rgba(20, 20, 40, .16);
+  --hover: rgba(255, 255, 255, .35);
+  --shadow: 0 1px 1px rgba(20, 20, 50, .04), 0 12px 32px -8px rgba(30, 20, 70, .22);
+  --lg-fill: rgba(255, 255, 255, .16);
+  --lg-fill-strong: rgba(250, 250, 255, .62);
+  /* the rim: bright where the light comes from (top left), faint on the far side, a soft glow inside */
+  --lg-rim:
+    inset 1px 1.5px 0 rgba(255, 255, 255, .9),
+    inset -1px -1px 0 rgba(255, 255, 255, .35),
+    inset 0 0 0 .5px rgba(255, 255, 255, .45),
+    inset 0 0 18px rgba(255, 255, 255, .22);
+  --lg-blur: blur(14px) saturate(1.9) brightness(1.06);
+  --lg-sheen: linear-gradient(135deg, rgba(255, 255, 255, .38), rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, .14));
+  --wall:
+    radial-gradient(42% 34% at 12% 14%, #ff9fb7, transparent 70%),
+    radial-gradient(40% 36% at 88% 10%, #9fb6ff, transparent 70%),
+    radial-gradient(46% 40% at 78% 62%, #ffd38a, transparent 70%),
+    radial-gradient(48% 40% at 18% 78%, #8fe3d0, transparent 70%),
+    radial-gradient(36% 30% at 52% 40%, #d7b8ff, transparent 70%),
+    linear-gradient(160deg, #f4eefc, #eef4fb 50%, #fbf1ea);
+}
+:root[data-style="glass"][data-accent="graphite"] { --accent: #1c1c22; --accent-ink: #fff; }
+
+/* Dark: a deep wallpaper with glowing colour, the glass stays clear. Same values twice ("Auto" in a dark system, and "Dunkel"). */
+@media (prefers-color-scheme: dark) {
+  :root[data-style="glass"]:not([data-theme="light"]) {
+    --bg: rgba(255, 255, 255, .05);
+    --surface: rgba(255, 255, 255, .09);
+    --ink: #f4f4f8;
+    --ink-2: #c4c4d0;
+    --muted: #8c8c9c;
+    --rule: rgba(255, 255, 255, .08);
+    --rule-strong: rgba(255, 255, 255, .16);
+    --hover: rgba(255, 255, 255, .08);
+    --shadow: 0 1px 1px rgba(0, 0, 0, .3), 0 14px 36px -8px rgba(0, 0, 0, .65);
+    --lg-fill: rgba(30, 30, 40, .28);
+    --lg-fill-strong: rgba(28, 28, 36, .72);
+    --lg-rim:
+      inset 1px 1.5px 0 rgba(255, 255, 255, .32),
+      inset -1px -1px 0 rgba(255, 255, 255, .1),
+      inset 0 0 0 .5px rgba(255, 255, 255, .14),
+      inset 0 0 18px rgba(255, 255, 255, .05);
+    --lg-blur: blur(14px) saturate(1.8) brightness(.9);
+    --lg-sheen: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, .05));
+    --wall:
+      radial-gradient(42% 34% at 12% 14%, rgba(220, 60, 120, .55), transparent 70%),
+      radial-gradient(40% 36% at 88% 10%, rgba(70, 100, 240, .6), transparent 70%),
+      radial-gradient(46% 40% at 78% 62%, rgba(230, 140, 40, .4), transparent 70%),
+      radial-gradient(48% 40% at 18% 78%, rgba(30, 170, 150, .45), transparent 70%),
+      radial-gradient(36% 30% at 52% 40%, rgba(140, 80, 230, .45), transparent 70%),
+      linear-gradient(160deg, #0b0a12, #08090f 50%, #0f0a0a);
+    color-scheme: dark;
+  }
+  :root[data-style="glass"][data-accent="graphite"]:not([data-theme="light"]) { --accent: #f4f4f8; --accent-ink: #111; }
+}
+:root[data-style="glass"][data-theme="dark"] {
+  --bg: rgba(255, 255, 255, .05);
+  --surface: rgba(255, 255, 255, .09);
+  --ink: #f4f4f8;
+  --ink-2: #c4c4d0;
+  --muted: #8c8c9c;
+  --rule: rgba(255, 255, 255, .08);
+  --rule-strong: rgba(255, 255, 255, .16);
+  --hover: rgba(255, 255, 255, .08);
+  --shadow: 0 1px 1px rgba(0, 0, 0, .3), 0 14px 36px -8px rgba(0, 0, 0, .65);
+  --lg-fill: rgba(30, 30, 40, .28);
+  --lg-fill-strong: rgba(28, 28, 36, .72);
+  --lg-rim:
+    inset 1px 1.5px 0 rgba(255, 255, 255, .32),
+    inset -1px -1px 0 rgba(255, 255, 255, .1),
+    inset 0 0 0 .5px rgba(255, 255, 255, .14),
+    inset 0 0 18px rgba(255, 255, 255, .05);
+  --lg-blur: blur(14px) saturate(1.8) brightness(.9);
+  --lg-sheen: linear-gradient(135deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, .05));
+  --wall:
+    radial-gradient(42% 34% at 12% 14%, rgba(220, 60, 120, .55), transparent 70%),
+    radial-gradient(40% 36% at 88% 10%, rgba(70, 100, 240, .6), transparent 70%),
+    radial-gradient(46% 40% at 78% 62%, rgba(230, 140, 40, .4), transparent 70%),
+    radial-gradient(48% 40% at 18% 78%, rgba(30, 170, 150, .45), transparent 70%),
+    radial-gradient(36% 30% at 52% 40%, rgba(140, 80, 230, .45), transparent 70%),
+    linear-gradient(160deg, #0b0a12, #08090f 50%, #0f0a0a);
+  color-scheme: dark;
+}
+:root[data-style="glass"][data-theme="dark"][data-accent="graphite"] { --accent: #f4f4f8; --accent-ink: #111; }
+
+/* ---------- wallpaper: one fixed layer that slowly breathes, so the glass has something to bend ---------- */
+
+[data-style="glass"] body { background: transparent; }
+[data-style="glass"] body::before {
+  content: ''; position: fixed; inset: -10%; z-index: -1; pointer-events: none;
+  background: var(--wall);
+  animation: lg-breathe 40s ease-in-out infinite alternate;
+}
+@keyframes lg-breathe { to { transform: translate3d(3%, -4%, 0) rotate(6deg) scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { [data-style="glass"] body::before { animation: none; } }
+
+/* ---------- glass panes: header, page, tab bar, sheets, timer bar, toast ---------- */
+
+[data-style="glass"] .g-head,
+[data-style="glass"] .g-view,
+[data-style="glass"] .g-bottom,
+[data-style="glass"] .dock,
+[data-style="glass"] .g-toast,
+[data-style="glass"] dialog.sheet {
+  background: var(--lg-sheen), var(--lg-fill);
+  border: 0;
+  box-shadow: var(--lg-rim), var(--shadow);
+  -webkit-backdrop-filter: var(--lg-blur);
+  backdrop-filter: var(--lg-blur);
+}
+[data-style="glass"] .g-head { margin-top: 14px; padding: 10px 10px 10px 22px; border-radius: 999px; }
+[data-style="glass"] .g-view { margin: 14px auto 40px; padding-top: 18px; border-radius: 32px; }
+[data-style="glass"] dialog.sheet { border-radius: 30px; }
+[data-style="glass"] dialog.sheet, [data-style="glass"] .g-toast, [data-style="glass"] .dock { background: var(--lg-sheen), var(--lg-fill-strong); }
+[data-style="glass"] .g-toast, [data-style="glass"] .dock { border-radius: 999px; }
+[data-style="glass"] dialog.sheet::backdrop { background: rgba(10, 10, 20, .18); backdrop-filter: blur(2px); }
+[data-style="glass"] .sheet-foot { background: transparent; }
+[data-style="glass"] .g-brand { letter-spacing: -.02em; }
+
+/* ---------- cards: thinner glass inside the glass ---------- */
+
+[data-style="glass"] .g-quest,
+[data-style="glass"] .g-banner,
+[data-style="glass"] .card,
+[data-style="glass"] .g-badge,
+[data-style="glass"] .g-review-btn,
+[data-style="glass"] .g-summary,
+[data-style="glass"] .g-idea,
+[data-style="glass"] .timer-box {
+  background: var(--lg-sheen), var(--surface);
+  border-color: transparent;
+  border-radius: 22px;
+  box-shadow: var(--lg-rim), 0 4px 14px -6px rgba(30, 20, 70, .16);
+}
+[data-style="glass"] .g-quest, [data-style="glass"] .g-banner, [data-style="glass"] .g-review-btn { transition: transform .2s cubic-bezier(.3, 1.6, .5, 1), box-shadow .2s; }
+[data-style="glass"] .g-quest:hover, [data-style="glass"] .g-banner:hover, [data-style="glass"] .g-review-btn:hover {
+  border-color: transparent; transform: scale(1.012);
+}
+[data-style="glass"] .g-quest:active, [data-style="glass"] .g-banner:active, [data-style="glass"] .g-review-btn:active { transform: scale(.985); }
+
+/* ---------- buttons: clear glass capsules; the main action is tinted glass in the accent ---------- */
+
+[data-style="glass"] .pill,
+[data-style="glass"] .seg [aria-pressed="true"],
+[data-style="glass"] .g-tabs a[aria-current="page"],
+[data-style="glass"] .g-bottom a[aria-current="page"] {
+  border-color: transparent;
+  border-radius: 999px;
+  background: var(--lg-sheen), var(--surface);
+  box-shadow: var(--lg-rim), 0 2px 8px -2px rgba(30, 20, 70, .14);
+  color: var(--ink);
+}
+[data-style="glass"] .pill, [data-style="glass"] .icon-btn, [data-style="glass"] .check { transition: transform .18s cubic-bezier(.3, 1.6, .5, 1); }
+[data-style="glass"] .pill:active, [data-style="glass"] .icon-btn:active, [data-style="glass"] .check:active { transform: scale(.94); }
+[data-style="glass"] .pill.primary,
+[data-style="glass"] .switch:checked,
+[data-style="glass"] .check.on {
+  border-color: transparent;
+  background: var(--lg-sheen), color-mix(in srgb, var(--accent) 82%, transparent);
+  box-shadow: var(--lg-rim), 0 4px 14px -4px color-mix(in srgb, var(--accent) 55%, transparent);
+  color: var(--accent-ink);
+}
+[data-style="glass"] .check { border-color: transparent; background: var(--surface); box-shadow: var(--lg-rim), inset 0 0 0 1px var(--rule-strong); }
+[data-style="glass"] .check.on::after { border-color: var(--accent-ink); }
+[data-style="glass"] .seg, [data-style="glass"] .switch { border-radius: 999px; background: var(--bg); box-shadow: inset 0 1px 3px rgba(20, 20, 50, .12); }
+[data-style="glass"] .seg button { border-radius: 999px; }
+[data-style="glass"] .switch::after { box-shadow: 0 2px 6px rgba(0, 0, 0, .2); }
+[data-style="glass"] .switch:checked::after { background: #fff; }
+
+/* ---------- progress: a thin lit capsule ---------- */
+
+[data-style="glass"] .g-bar, [data-style="glass"] .g-steps i { background: var(--bg); box-shadow: inset 0 1px 2px rgba(20, 20, 50, .14); border-radius: 99px; }
+[data-style="glass"] .g-bar { height: 6px; }
+[data-style="glass"] .g-bar i, [data-style="glass"] .g-steps i.on {
+  border-radius: 99px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .45), rgba(255, 255, 255, 0) 60%), var(--accent);
+}
+
+/* ---------- phone: floating capsules top and bottom ---------- */
+
+@media (max-width: 759.98px) {
+  [data-style="glass"] .g-head { top: max(8px, env(safe-area-inset-top)); margin: max(8px, env(safe-area-inset-top)) 12px 0; padding: 8px 8px 8px 18px; }
+  [data-style="glass"] .g-view { margin: 10px 8px 0; padding-top: 12px; border-radius: 28px; }
+  [data-style="glass"] .g-bottom { left: 14px; right: 14px; bottom: max(12px, env(safe-area-inset-bottom)); padding: 6px; border-radius: 999px; }
+  [data-style="glass"] .g-bottom a { border-radius: 999px; }
+  [data-style="glass"] .dock { bottom: calc(88px + env(safe-area-inset-bottom)); }
+  [data-style="glass"] .g-toast, [data-style="glass"] body.has-dock .g-toast { bottom: calc(148px + env(safe-area-inset-bottom)); }
+  [data-style="glass"] body:not(.has-dock) .g-toast { bottom: calc(92px + env(safe-area-inset-bottom)); }
+  [data-style="glass"] dialog.sheet { border-radius: 30px 30px 0 0; }
+}
+
+@media print {
+  [data-style="glass"] body::before { display: none; }
+  [data-style="glass"] .g-view { margin: 0; background: #fff; box-shadow: none; backdrop-filter: none; }
+}

@@ -5,10 +5,10 @@ import { syncInfo, onSyncChange, signIn, signUp, signOut, syncNow } from './sync
 import { pushState, enablePush, disablePush, testPush } from './push.js';
 
 const THEMES = [['auto', 'Auto'], ['light', 'Hell'], ['dark', 'Dunkel']];
-// "Aero" is glass, sky and gloss on top of the same layout (css/style.css → "style: Aero").
-const STYLES = [['calm', 'Ruhig'], ['aero', 'Aero']];
+// "Aero" (css/aero.css) and "Glas" (css/glass.css) restyle the same layout.
+const STYLES = [['calm', 'Ruhig'], ['aero', 'Aero'], ['glass', 'Glas']];
 // Browser bar colour per style, light and dark.
-const BAR = { calm: ['#fafaf9', '#111113'], aero: ['#7fd3f3', '#06233a'] };
+const BAR = { calm: ['#fafaf9', '#111113'], aero: ['#7fd3f3', '#06233a'], glass: ['#f1eef8', '#0b0a10'] };
 const ACCENTS = [['graphite', 'Graphit'], ['blue', 'Blau'], ['green', 'Grün'], ['coral', 'Koralle'], ['violet', 'Violett'], ['amber', 'Bernstein']];
 
 const dlg = document.getElementById('settings');

@@ -30,7 +30,7 @@ Dann http://localhost:5180 öffnen.
 | Abzeichen | `js/rules.js` → `BADGES` |
 | Quest-Ideen pro Bereich | `js/rules.js` → `QUEST_IDEAS` |
 | Start-Bereiche, -Quests, -Gewohnheiten (neues Gerät ohne Konto) | `js/rules.js` → `SEED` |
-| Aussehen | `css/style.css` (Stil „Ruhig“), `css/aero.css` (Stil „Aero“: Himmel, Blasen, Glas, Gel-Buttons) |
+| Aussehen | `css/style.css` (Stil „Ruhig“), `css/aero.css` (Stil „Aero“: Himmel, Blasen, Glas, Gel-Buttons), `css/glass.css` (Stil „Glas“: Liquid Glass, klares Glas mit Lichtkante, Kapseln) |
 | Ein Screen | `js/views/*.js` (Quests, Heute, Charakter, Journal, Mehr) |
 | Ein Detail-Fenster | `js/sheets/*.js` |
 | Wie XP berechnet werden | `js/xp.js` |

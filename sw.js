@@ -1,6 +1,6 @@
-const CACHE = 'grow-v4';
+const CACHE = 'grow-v5';
 const SHELL = [
-  './', 'index.html', 'manifest.webmanifest', 'css/style.css', 'css/aero.css',
+  './', 'index.html', 'manifest.webmanifest', 'css/style.css', 'css/aero.css', 'css/glass.css',
   'js/app.js', 'js/store.js', 'js/sync.js', 'js/config.js', 'js/rules.js', 'js/dates.js', 'js/ui.js', 'js/model.js',
   'js/xp.js', 'js/charts.js', 'js/sheet.js', 'js/settings.js', 'js/timer.js', 'js/photos.js', 'js/push.js',
   'js/views/quests.js', 'js/views/today.js', 'js/views/character.js', 'js/views/journal.js', 'js/views/more.js',
