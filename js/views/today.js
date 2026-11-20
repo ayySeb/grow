@@ -1,5 +1,5 @@
 import * as store from '../store.js';
-import { MOODS, PAUSE_DAYS } from '../rules.js';
+import { MOODS, ENERGY, PAUSE_DAYS } from '../rules.js';
 import { iso, parse, addDays, todayIso, weekdayLong, dayMonth } from '../dates.js';
 import { esc, ICON, num, liveClock } from '../ui.js';
 import { timed } from '../timer.js';
@@ -99,11 +99,17 @@ export function render() {
       ${other.length ? `<h3 class="g-subhead">Heute nicht dran, geht aber trotzdem</h3><ul class="g-habits g-quiet">${other.map(row).join('')}</ul>` : ''}
       <button type="button" class="g-add" data-act="new-habit">${ICON.plus}Gewohnheit</button>
     </section>
-    <section class="g-sec">
-      <h2 class="g-h">Tagessatz</h2>
+    <section class="g-sec g-checkin">
+      <h2 class="g-h">Check-in</h2>
+      <h3 class="g-subhead">Morgens · Energie und Fokus</h3>
+      <div class="seg g-moods" role="group" aria-label="Energie">${ENERGY.map((m, i) =>
+        `<button type="button" data-energy="${i + 1}" aria-pressed="${entry?.energy === i + 1}">${m}</button>`).join('')}</div>
+      <input class="g-sentence" name="intention" placeholder="${date === today ? 'Heute' : 'An dem Tag'} ist mir wichtig …" enterkeyhint="done" value="${esc(entry?.intention ?? '')}">
+      <h3 class="g-subhead">Abends · Stimmung und Rückblick</h3>
       <div class="seg g-moods" role="group" aria-label="Stimmung">${MOODS.map((m, i) =>
         `<button type="button" data-mood="${i + 1}" aria-pressed="${entry?.mood === i + 1}">${m}</button>`).join('')}</div>
       <textarea class="g-sentence" name="sentence" rows="1" placeholder="Ein Satz zu ${date === today ? 'heute' : 'diesem Tag'} …" enterkeyhint="done">${esc(entry?.text ?? '')}</textarea>
+      <input class="g-sentence" name="proud" placeholder="Darauf bin ich stolz …" enterkeyhint="done" value="${esc(entry?.proud ?? '')}">
     </section>
     <section class="g-sec">
       <h2 class="g-h">Erlebt</h2>
@@ -119,6 +125,10 @@ export function click(e, rerender) {
   const b = e.target.closest('button');
   if (!b) return;
   const hId = b.closest('[data-habit]')?.dataset.habit;
+  if (b.dataset.energy) {
+    const energy = +b.dataset.energy;
+    return store.put(day(), 'entry', { type: 'day', key: date, energy: store.get(day())?.energy === energy ? null : energy });
+  }
   if (b.dataset.mood) {
     const mood = +b.dataset.mood;
     return store.put(day(), 'entry', { type: 'day', key: date, mood: store.get(day())?.mood === mood ? null : mood });
@@ -144,10 +154,11 @@ export function click(e, rerender) {
 
 export function input(e) {
   if (e.target.name === 'sentence') store.put(day(), 'entry', { type: 'day', key: date, text: e.target.value.replace(/\n/g, ' ') });
+  else if (e.target.name === 'intention' || e.target.name === 'proud') store.put(day(), 'entry', { type: 'day', key: date, [e.target.name]: e.target.value });
 }
 
 export function keydown(e) {
-  if (e.target.name === 'sentence' && e.key === 'Enter' && !e.isComposing) {
+  if (['sentence', 'intention', 'proud'].includes(e.target.name) && e.key === 'Enter' && !e.isComposing) {
     e.preventDefault();
     e.target.blur();
   }

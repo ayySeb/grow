@@ -84,7 +84,7 @@ export const questDoneAt = q => (questDone(q) ? Math.max(...q.milestones.map(m =
 
 export function entryFilled(e) {
   if (!e) return false;
-  if (e.type === 'day') return !!e.text?.trim();
+  if (e.type === 'day') return !!(e.text?.trim() || e.intention?.trim() || e.proud?.trim());
   return Object.values(e.answers ?? {}).some(v => v?.trim()) || Object.keys(e.wheel ?? {}).length > 0;
 }
 

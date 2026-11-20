@@ -417,6 +417,9 @@ svg { display: block; width: 18px; height: 18px; flex: none; }
 .g-quiet .g-habit-title, .g-quiet .g-side-title { color: var(--ink-2); }
 
 .g-moods { margin-bottom: 10px; }
+.g-checkin .g-subhead { margin-top: 14px; }
+.g-checkin .g-subhead:first-of-type { margin-top: 0; }
+.g-checkin input.g-sentence { margin-top: 8px; display: block; width: 100%; box-sizing: border-box; }
 .g-moods button { font-size: 13px; }
 .g-sentence {
   width: 100%;

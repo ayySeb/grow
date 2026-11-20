@@ -26,6 +26,8 @@ export const PAUSE_DAYS = 7;
 
 export const INTENSITY = [[1, 'Leicht'], [2, 'Normal'], [3, 'Stark']];
 export const MOODS = ['Schwer', 'Mau', 'Okay', 'Gut', 'Super'];
+// Morgen-Check-in: wie voll der Akku ist (1–5).
+export const ENERGY = ['Leer', 'Müde', 'Okay', 'Fit', 'Voll'];
 export const SIZES = { S: 'Klein', M: 'Mittel', L: 'Groß' };
 export const LEARN_TYPES = ['Buch', 'Kurs', 'Podcast', 'Video', 'Song'];
 

@@ -1,4 +1,4 @@
-const CACHE = 'grow-v6';
+const CACHE = 'grow-v7';
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'css/style.css', 'css/aero.css', 'css/glass.css',
   'js/app.js', 'js/store.js', 'js/sync.js', 'js/config.js', 'js/rules.js', 'js/dates.js', 'js/ui.js', 'js/model.js',

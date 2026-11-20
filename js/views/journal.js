@@ -11,7 +11,7 @@ const TYPES = ['week', 'month', 'quarter', 'year'];
 const KIND = { day: 'Tag', week: 'Woche', month: 'Monat', quarter: 'Quartal', year: 'Jahr' };
 
 function preview(e) {
-  if (e.type === 'day') return e.text;
+  if (e.type === 'day') return [e.intention && `Fokus: ${e.intention}`, e.text, e.proud && `Stolz: ${e.proud}`].filter(x => x?.trim()).join(' · ');
   const cfg = REVIEWS[e.type];
   const qs = [...cfg.questions, ...(cfg.more ?? [])];
   const first = qs.find(q => e.answers?.[q.id]?.trim());
