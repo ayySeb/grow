@@ -1,5 +1,6 @@
 import * as store from './store.js';
 import { SUPABASE_URL, SUPABASE_KEY } from './config.js';
+import { pullHealth, clearHealth } from './health.js';
 
 // Syncs items through Supabase, the same project and login as Tage. Each item is one row in grow_items
 // holding the whole item as JSON. The newer updatedAt wins, here in store.applyRemote and on the server
@@ -61,6 +62,9 @@ function userChanged() {
   channel = db.channel(TABLE)
     .on('postgres_changes', { event: '*', schema: 'public', table: TABLE, filter: `user_id=eq.${user.id}` },
       ({ new: row }) => row?.data && store.applyRemote([row]))
+    // Health data from the phone app grow-health: reload when a day changes.
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'health_days', filter: `user_id=eq.${user.id}` },
+      () => pullHealth(db).catch(e => console.warn('Health', e)))
     .subscribe();
   syncNow();
 }
@@ -92,6 +96,7 @@ async function run() {
   try {
     await pull();
     await push();
+    await pullHealth(db).catch(e => console.warn('Health', e));
     lastSync = new Date();
     setStatus('idle');
   } catch (e) {
@@ -157,4 +162,5 @@ export async function signUp(email, password) {
 export async function signOut() {
   await db.auth.signOut();
   store.setCursor(null);
+  clearHealth();
 }

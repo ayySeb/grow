@@ -1,8 +1,8 @@
-const CACHE = 'grow-v5';
+const CACHE = 'grow-v6';
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'css/style.css', 'css/aero.css', 'css/glass.css',
   'js/app.js', 'js/store.js', 'js/sync.js', 'js/config.js', 'js/rules.js', 'js/dates.js', 'js/ui.js', 'js/model.js',
-  'js/xp.js', 'js/charts.js', 'js/sheet.js', 'js/settings.js', 'js/timer.js', 'js/photos.js', 'js/push.js',
+  'js/xp.js', 'js/charts.js', 'js/sheet.js', 'js/settings.js', 'js/timer.js', 'js/photos.js', 'js/push.js', 'js/health.js',
   'js/views/quests.js', 'js/views/today.js', 'js/views/character.js', 'js/views/journal.js', 'js/views/more.js',
   'js/sheets/quest.js', 'js/sheets/habit.js', 'js/sheets/check.js', 'js/sheets/moment.js', 'js/sheets/area.js',
   'js/sheets/review.js', 'js/sheets/ideas.js',

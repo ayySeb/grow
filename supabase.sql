@@ -94,3 +94,20 @@ select cron.schedule('grow-week-reminder', '0 * * * 0,1', $$
     timeout_milliseconds := 15000
   );
 $$);
+
+-- ============================================================================================
+-- Phase 3: Gesundheitsdaten vom Haupthandy (App grow-health liest Health Connect, 1 Zeile pro Tag).
+-- Auch der Home-Stand (A50) liest daraus. Ausgeführt am 2026-11-20.
+-- ============================================================================================
+
+create table public.health_days (
+  user_id uuid not null default auth.uid() references auth.users on delete cascade,
+  day date not null,
+  data jsonb not null,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, day)
+);
+alter table public.health_days enable row level security;
+create policy "own health days" on public.health_days for all to authenticated
+  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
+alter publication supabase_realtime add table public.health_days;

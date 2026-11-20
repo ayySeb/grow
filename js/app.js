@@ -1,5 +1,6 @@
 import * as store from './store.js';
 import { initSync } from './sync.js';
+import { onHealth } from './health.js';
 import { openSettings, applySettings } from './settings.js';
 import { levels } from './xp.js';
 import { ICON, esc, toast, liveClock, tick } from './ui.js';
@@ -143,6 +144,7 @@ nav();
 store.subscribe(watchLevels);
 store.subscribe(refresh);
 store.subscribe(renderDock);
+onHealth(refresh);
 render();
 renderDock();
 initSync();

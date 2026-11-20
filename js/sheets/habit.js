@@ -3,6 +3,7 @@ import { esc, ICON } from '../ui.js';
 import { targetOptions, WEEKDAYS, byOrder } from '../model.js';
 import { heatmap } from '../charts.js';
 import { openSheet, blurOnEnter } from '../sheet.js';
+import { METRICS, autoCheck, hasHealth } from '../health.js';
 
 let id = null;
 const habit = () => store.get(id);
@@ -58,6 +59,12 @@ function render(dlg) {
           </select>
           ${h.mode === 'amount' ? `<input name="unit" value="${esc(h.unit)}" placeholder="Einheit, z. B. km" class="g-unit">` : ''}
         </div></label>
+        <label class="field"><span class="label">Automatisch</span><div class="ctrl">
+          <select name="healthMetric"><option value="">Aus</option>${Object.entries(METRICS).map(([k, m]) =>
+            `<option value="${k}"${h.health?.metric === k ? ' selected' : ''}>${m.label}</option>`).join('')}</select>
+          ${h.health?.metric ? `<span class="g-hint-inline">ab</span><input type="number" inputmode="decimal" name="healthMin" class="g-num" min="0" step="${METRICS[h.health.metric].step}" value="${h.health.min ?? ''}"><span class="g-hint-inline">${METRICS[h.health.metric].unit}</span>` : ''}
+        </div></label>
+        ${h.health?.metric ? `<p class="hint">Hakt sich von selbst ab, sobald die Uhr den Wert meldet (Health Connect über grow Health)${hasHealth() ? '' : '. Noch keine Health-Daten da'}. Nimmst du einen Haken weg, bleibt er weg.</p>` : ''}
         <label class="field"><span class="label">Quest</span><div class="ctrl"><select name="questId"><option value="">Keine</option>${quests.map(q =>
           `<option value="${q.id}"${q.id === h.questId ? ' selected' : ''}>${esc(q.title) || 'Ohne Titel'}</option>`).join('')}</select></div></label>
       </div>
@@ -125,6 +132,16 @@ function change(e) {
   else if (el.name === 'mode') {
     store.update(id, { mode: el.value });
     redraw();
+  } else if (el.name === 'healthMetric') {
+    const m = METRICS[el.value];
+    store.update(id, { health: m ? { metric: el.value, min: m.min } : null });
+    // Values with a unit read best as an amount: "6,5 km", "7,2 h".
+    if (m && habit().mode === 'check' && el.value !== 'sleep') store.update(id, { mode: 'amount', unit: habit().unit || m.unit });
+    autoCheck();
+    redraw();
+  } else if (el.name === 'healthMin') {
+    store.update(id, { health: { ...habit().health, min: Math.max(0, parseFloat(el.value.replace(',', '.')) || 0) } });
+    autoCheck();
   }
 }
 

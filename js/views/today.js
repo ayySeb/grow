@@ -10,6 +10,7 @@ import { periodLabel } from '../dates.js';
 import { quickCheck, uncheck, openCheck, startAndTell } from '../sheets/check.js';
 import { newHabit } from '../sheets/habit.js';
 import { newMoment, openMoment } from '../sheets/moment.js';
+import { healthDay, hm, clock, fmtNum } from '../health.js';
 
 // Habits for one day (today by default, earlier days can be filled in), the day's sentence and mood, and firsts.
 
@@ -38,6 +39,7 @@ function row(h) {
   else if (h.rhythm.type === 'days') meta.push(rhythmLabel(h.rhythm));
   if (c?.amount) meta.push(`${num(c.amount)} ${h.unit}`);
   if (c?.mini) meta.push('Mini');
+  if (c?.auto === 'health') meta.push('aus Health');
   if (c?.note?.trim()) meta.push(ICON.note);
   if (compute().bests.has(c?.id)) meta.push('<b class="g-best">Bestleistung</b>');
   const mini = !c && date === todayIso() && h.mini && resting(h, PAUSE_DAYS)
@@ -52,6 +54,23 @@ function row(h) {
       ${timerButton(h)}
       ${c ? `<span class="g-xp">+${checkXp(c)}</span>` : ''}
     </li>`;
+}
+
+// Body card: last night's sleep, steps, training and pulse from the phone app grow-health.
+function bodyCard() {
+  const d = healthDay(date);
+  if (!d) return '';
+  const tiles = [];
+  const s = d.sleep;
+  if (s) tiles.push(`<div class="card"><b>${hm(s.asleep)}</b><span>Schlaf · ${clock(s.start)}–${clock(s.end)}${s.deep != null ? `<br>Tief ${hm(s.deep)} · REM ${hm(s.rem)}` : ''}</span></div>`);
+  if (d.steps != null) tiles.push(`<div class="card"><b>${fmtNum(d.steps)}</b><span>Schritte${d.distanceKm ? ` · ${fmtNum(d.distanceKm)} km` : ''}</span></div>`);
+  const ex = d.exercises ?? [];
+  if (ex.length) tiles.push(`<div class="card"><b>${d.exerciseMinutes ?? ex.reduce((m, e) => m + e.minutes, 0)} Min</b><span>${ex.map(e =>
+    esc(e.type) + (e.km ? ` ${fmtNum(e.km)} km` : '')).join(' · ')}</span></div>`);
+  const pulse = d.restingHr ?? d.hr?.min;
+  if (pulse) tiles.push(`<div class="card"><b>${pulse}</b><span>${d.restingHr ? 'Ruhepuls' : 'Puls min.'}${d.hr?.avg ? ` · Ø ${d.hr.avg}` : ''}</span></div>`);
+  if (!tiles.length) return '';
+  return `<section class="g-sec"><h2 class="g-h">Körper</h2><div class="cards g-body">${tiles.join('')}</div></section>`;
 }
 
 export function render() {
@@ -73,6 +92,7 @@ export function render() {
       <span class="g-dayxp">${xp ? `+${num(xp)} XP` : ''}</span>
     </div>
     ${date === today ? reviewBanners() : ''}
+    ${bodyCard()}
     <section class="g-sec">
       <h2 class="g-h">Gewohnheiten</h2>
       ${due.length ? `<ul class="g-habits">${due.map(row).join('')}</ul>` : '<p class="hint">Für diesen Tag ist nichts geplant.</p>'}
